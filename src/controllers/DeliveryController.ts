@@ -27,19 +27,28 @@ export default {
 
             let price_total = 0;
 
-            items.forEach(async (item : ItemDeliveryPrice) => {
+            for(let item of items){
                 const item_model = await Item.findById(item.uid);
-                if(item_model){
-                    price_total += item.count * item_model.price;
-                }
-            });
-            
-            const delivery = await Delivery.create({userid: uid, restaurant, price: price_total, lat, long, items})
+                price_total += item.count * item_model.price;
+            }
+            const delivery = await Delivery.create({userid: uid, restaurant: restaurant, price: price_total, lat, long, items})
             return response.status(200).json(delivery);
         } catch (err) {
             return response.status(401).json({message: 'Unauthorized'});
         }
         
+    },
+
+    async rate(request: Request, response: Response){
+        const { uid, user, rate } = request.body;
+
+        const delivery = await Delivery.findById(uid);
+
+        if(!delivery || delivery.userid != user) return response.status(401).json({message: 'Unauthorized'});
+
+        await delivery.updateById(uid, { rate })
+
+        return response.status(200).json({message: 'Ok'});
     }
 
 };

@@ -23,6 +23,11 @@ const deliverySchema = new Schema({
         type: Number,
         required: true
     },
+    rate:{
+        type: Number,
+        default: -1,
+        required: false
+    },
     items: {
         type: Array,
         required: true
