@@ -30,6 +30,7 @@ app.use(cors());
 app.use(morgan('dev'));
 
 app.use('/restaurant', restaurantRoutes);
+app.use('/delivery', restaurantRoutes);
 
 connect({
     type,

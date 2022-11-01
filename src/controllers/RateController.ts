@@ -4,9 +4,7 @@ import { Request, Response } from 'express';
 import { rateSchema } from '../schema';
 import Rate from '../model/Rate';
 
-/**
- * Use o conteúdo da variável `Users` para desenvolver os métodos necessários
- */
+
 export default {
     async create(request: Request, response: Response){
 

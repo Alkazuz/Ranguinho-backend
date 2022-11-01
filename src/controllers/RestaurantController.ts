@@ -6,9 +6,7 @@ import Restaurant from '../model/Restaurant';
 import geohash from "ngeohash";
 import { restaurantSchema } from '../schema';
 
-/**
- * Use o conteúdo da variável `Users` para desenvolver os métodos necessários
- */
+
 export default {
     async list(request: Request, response: Response){
 

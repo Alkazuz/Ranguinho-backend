@@ -1,6 +1,6 @@
 const {Schema, Model} = require('firefose');
 const {SchemaTypes} = require('firefose');
-const {String, Number, Array, ObjectId} = SchemaTypes;
+const {String, Number, Array} = SchemaTypes;
 
 const deliverySchema = new Schema({
     userid: {
@@ -8,7 +8,7 @@ const deliverySchema = new Schema({
         required: true
     },
     restaurant:{
-        type: ObjectId,
+        type: String,
         required: true
     },
     lat: {
@@ -19,8 +19,12 @@ const deliverySchema = new Schema({
         type: Number,
         required: true
     },
+    price: {
+        type: Number,
+        required: true
+    },
     items: {
-        type: Map,
+        type: Array,
         required: true
     },
     status: {
