@@ -16,6 +16,7 @@ app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 app.use((0, morgan_1.default)('dev'));
 app.use('/restaurant', restaurant_1.default);
+app.use('/delivery', restaurant_1.default);
 connect({
     type,
     project_id,

@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { Schema, Model } = require('firefose');
 const { SchemaTypes } = require('firefose');
-const { String, Number, Array, ObjectId } = SchemaTypes;
+const { String, Number, Array } = SchemaTypes;
 const deliverySchema = new Schema({
     userid: {
         type: String,
         required: true
     },
     restaurant: {
-        type: ObjectId,
+        type: String,
         required: true
     },
     lat: {
@@ -20,8 +20,17 @@ const deliverySchema = new Schema({
         type: Number,
         required: true
     },
+    price: {
+        type: Number,
+        required: true
+    },
+    rate: {
+        type: Number,
+        default: -1,
+        required: false
+    },
     items: {
-        type: Map,
+        type: Array,
         required: true
     },
     status: {

@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-const {
+import {
     type,
     project_id,
     private_key_id,
@@ -22,7 +22,7 @@ const {
     auth_uri,
     token_uri,
     auth_provider_x509_cert_url,
-    client_x509_cert_url} = process.env
+    client_x509_cert_url} from './credentials.json'
 
 app.use(express.json());
 app.use(cors());
@@ -30,7 +30,6 @@ app.use(cors());
 app.use(morgan('dev'));
 
 app.use('/restaurant', restaurantRoutes);
-app.use('/delivery', restaurantRoutes);
 
 connect({
     type,

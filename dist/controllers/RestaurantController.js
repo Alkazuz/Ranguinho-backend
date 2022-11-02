@@ -8,9 +8,6 @@ const firefose_1 = require("firefose");
 const Restaurant_1 = __importDefault(require("../model/Restaurant"));
 const ngeohash_1 = __importDefault(require("ngeohash"));
 const schema_1 = require("../schema");
-/**
- * Use o conteúdo da variável `Users` para desenvolver os métodos necessários
- */
 exports.default = {
     async list(request, response) {
         const { lat, log } = request.body;

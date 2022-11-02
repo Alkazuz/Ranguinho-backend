@@ -3,10 +3,12 @@ import * as Yup from 'yup';
 // yarn add yup @types/yup
 
 export const restaurantSchema = Yup.object().shape({
-    user: Yup.string().required(),
-    restaurant: Yup.string().required(),
-    rate: Yup.number().required(),
-    description: Yup.string()
+    name: Yup.string().required(),
+    logo: Yup.string().required(),
+    delivery_price: Yup.number().required(),
+    category: Yup.string().required(),
+    lat: Yup.number().required(),
+    long: Yup.number().required()
 });
 
 export const rateSchema = Yup.object().shape({

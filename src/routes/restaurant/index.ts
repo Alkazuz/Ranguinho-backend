@@ -1,6 +1,8 @@
 import express from 'express';
-import DeliveryController from '../../controllers/DeliveryController';
+import RestaurantController from '../../controllers/RestaurantController';
+
 const routes = express.Router();
-routes.post('/new',  DeliveryController.create);
+routes.post('/new',  RestaurantController.create);
+routes.post('/list',  RestaurantController.list);
 
 export default routes;
