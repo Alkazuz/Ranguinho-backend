@@ -27,10 +27,12 @@ exports.rateSchema = exports.restaurantSchema = void 0;
 const Yup = __importStar(require("yup"));
 // yarn add yup @types/yup
 exports.restaurantSchema = Yup.object().shape({
-    user: Yup.string().required(),
-    restaurant: Yup.string().required(),
-    rate: Yup.number().required(),
-    description: Yup.string()
+    name: Yup.string().required(),
+    logo: Yup.string().required(),
+    delivery_price: Yup.number().required(),
+    category: Yup.string().required(),
+    lat: Yup.number().required(),
+    long: Yup.number().required()
 });
 exports.rateSchema = Yup.object().shape({
     name: Yup.string().required(),

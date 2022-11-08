@@ -7,5 +7,5 @@ const express_1 = __importDefault(require("express"));
 const DeliveryController_1 = __importDefault(require("../../controllers/DeliveryController"));
 const routes = express_1.default.Router();
 routes.post('/new', DeliveryController_1.default.create);
-routes.post('/rate', DeliveryController_1.default.rate);
+routes.put('/rate', DeliveryController_1.default.rate);
 exports.default = routes;

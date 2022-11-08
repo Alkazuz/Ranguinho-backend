@@ -4,7 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const DeliveryController_1 = __importDefault(require("../../controllers/DeliveryController"));
+const RestaurantController_1 = __importDefault(require("../../controllers/RestaurantController"));
 const routes = express_1.default.Router();
-routes.post('/new', DeliveryController_1.default.create);
+routes.post('/new', RestaurantController_1.default.create);
+routes.get('/list', RestaurantController_1.default.list);
+routes.get('/find/:id', RestaurantController_1.default.find);
 exports.default = routes;

@@ -6,10 +6,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/uuid": "^8.3.4",
     "@types/yup": "^0.32.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "firebase-functions": "^4.0.2",
     "firefose": "^1.1.5",
     "mongoose": "^6.5.3",
     "morgan": "^1.10.0",

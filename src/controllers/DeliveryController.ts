@@ -31,7 +31,7 @@ export default {
                 const item_model = await Item.findById(item.uid);
                 price_total += item.count * item_model.price;
             }
-            const delivery = await Delivery.create({userid: uid, restaurant: restaurant, price: price_total, lat, long, items})
+            const delivery = await Delivery.create({userid: uid, restaurant: restaurant, price: price_total, lat, long, items}, uuidv4())
             return response.status(200).json(delivery);
         } catch (err) {
             return response.status(401).json({message: 'Unauthorized'});
@@ -52,3 +52,7 @@ export default {
     }
 
 };
+
+function uuidv4(): any {
+    throw new Error('Function not implemented.');
+}
