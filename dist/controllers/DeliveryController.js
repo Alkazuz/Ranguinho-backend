@@ -20,7 +20,7 @@ exports.default = {
                 price_total += item.count * item_model.price;
             }
             const delivery = await Delivery_1.default.create({ userid: uid, restaurant: restaurant, price: price_total, lat, long, items }, uuidv4());
-            return response.status(200).json(delivery);
+            return response.status(201).json(delivery);
         }
         catch (err) {
             return response.status(401).json({ message: 'Unauthorized' });

@@ -12,10 +12,22 @@ const restaurantSchema = new Schema({
         type: String,
         required: true
     },
+    bannerUrl: {
+        type: String,
+        required: false
+    },
     delivery_price: {
         type: Number,
         default: 1.5,
         require: true
+    },
+    timeMinMinutes: {
+        type: Number,
+        default: 30,
+    },
+    timeMaxMinutes: {
+        type: Number,
+        default: 50,
     },
     category: {
         type: String,

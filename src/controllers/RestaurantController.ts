@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 //firebase
 import { Query } from 'firefose';
+import { Timestamp } from "firebase/firestore";
+
 import Restaurant from '../model/Restaurant';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -23,7 +25,6 @@ const calc_distance = (lat: number, long: number, lat_2: number, long_2: number)
     lat1 = lat1 * Math.PI / 180;
     lat2 = lat2 * Math.PI / 180;
 
-    // Haversine formula
     let dlon = lon2 - lon1;
     let dlat = lat2 - lat1;
     let a = Math.pow(Math.sin(dlat / 2), 2)
@@ -31,14 +32,22 @@ const calc_distance = (lat: number, long: number, lat_2: number, long_2: number)
              * Math.pow(Math.sin(dlon / 2),2);
            
     let c = 2 * Math.asin(Math.sqrt(a));
-
-    // Radius of earth in kilometers. Use 3956
-    // for miles
     let r = 6371;
 
-    // calculate the result
     return parseFloat((c * r).toFixed(1));
 }
+
+const populate_fields : string[] = [
+    'updatedAt',
+    'createdAt',
+    'timeMinMinutes', 
+    'timeMaxMinutes', 
+    'lat', 
+    'fee', 
+    'long', 
+    'geohash', 
+    'delivery_price'
+] 
 
 const calc_delivery = (distance: number, fee: number) => {
     let price = distance * fee;
@@ -50,7 +59,19 @@ const calc_delivery = (distance: number, fee: number) => {
 
 const process_restaurant_ful = (restaurant: typeof Restaurant, lat: number, lng: number) => {
     restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, lng);
-    restaurant.fee = calc_delivery(restaurant.distance, restaurant.delivery_price);
+
+    const delivery_info = {
+        type: 'DELIVERY',
+        timeMinMinutes: restaurant.timeMinMinutes,
+        timeMaxMinutes: restaurant.timeMaxMinutes,
+        fee: calc_delivery(restaurant.distance, restaurant.delivery_price)
+    }
+    restaurant.delivery_info = delivery_info;
+
+    for(const populate of populate_fields){
+        delete restaurant[populate];
+    }
+
 }
 
 export default {
@@ -69,20 +90,38 @@ export default {
         
         const data = await Restaurant.find(query);
 
-        for(const restaurant of data){
-            
+        for(const restaurant of data){ 
             process_restaurant_ful(restaurant, lat, lng)
         }
 
         return response.json(data).status(200);
     },
 
+    async update(request: Request, response: Response){
+        const id: string = request.params.id as string;
+        const dataBody = request.body.data as string;
+        
+
+        const data = JSON.parse(JSON.stringify(dataBody));
+        console.log(data);
+
+        let restaurant = await Restaurant.findById(id);
+
+        if(!restaurant) return response.send("Not found").status(404);
+        
+        data.updatedAt = new Date()
+
+        restaurant = await Restaurant.updateById(id, data);
+
+        if(restaurant) return response.json(restaurant).status(200);
+
+        return response.send("Erro").status(202)
+    },
+
     async find(request: Request, response: Response){
         const lat:number = parseFloat(request.query.lat as string)
         const lng:number = parseFloat(request.query.lng as string)
         const id:string  = request.params.id as string;
-
-        console.log(lat, lng, id)
 
         const restaurant = await Restaurant.findById(id);
 
@@ -110,13 +149,19 @@ export default {
         }
 
         const geoh = geohash.encode(lat, long);
+
         const restaurant = await Restaurant.create({ 
             name,
             logo,
             delivery_price,
             category,
             lat,
-            long, geohash: geoh}, uuidv4());
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            long, 
+            geohash: geoh
+        }, uuidv4());
+
         return response.status(200).json({
             message: 'Restaurante criado com sucesso',
             restaurant,
