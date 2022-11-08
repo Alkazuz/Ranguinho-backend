@@ -48,36 +48,47 @@ const calc_delivery = (distance: number, fee: number) => {
     return price;
 }
 
+const process_restaurant_ful = (restaurant: typeof Restaurant, lat: number, lng: number) => {
+    restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, lng);
+    restaurant.fee = calc_delivery(restaurant.distance, restaurant.delivery_price);
+}
+
 export default {
     async list(request: Request, response: Response){
 
-        const lat:number = parseFloat(request.query.page as string)
-        const log:number = parseFloat(request.query.limit as string)
+        const lat:number = parseFloat(request.query.lat as string)
+        const lng:number = parseFloat(request.query.lng as string)
+        const page:number = parseInt(request.query.page as string)
 
-        const range = getGeohashRange(lat, log, 30);
+        const range = getGeohashRange(lat, lng, 30);
 
         const query = new Query()
         .where("geohash", ">=", range.lower)
         .where("geohash", "<=", range.upper)
+        .offset(page * 10).limit(10)
         
         const data = await Restaurant.find(query);
 
         for(const restaurant of data){
-            restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, log);
-            restaurant.fee = calc_delivery(restaurant.distance, restaurant.delivery_price)
+            
+            process_restaurant_ful(restaurant, lat, lng)
         }
 
         return response.json(data).status(200);
     },
 
     async find(request: Request, response: Response){
-        const { id } = request.params;
-        const {lat, log} = request.body;
+        const lat:number = parseFloat(request.query.lat as string)
+        const lng:number = parseFloat(request.query.lng as string)
+        const id:string  = request.params.id as string;
+
+        console.log(lat, lng, id)
+
         const restaurant = await Restaurant.findById(id);
 
         if(!restaurant) return response.send("Not found").status(404);
-        restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, log);
-        restaurant.fee = calc_delivery(restaurant.distance, restaurant.delivery_price)
+        
+        process_restaurant_ful(restaurant, lat, lng)
         
         return response.send(restaurant);
 
