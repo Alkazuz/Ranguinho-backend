@@ -3,6 +3,9 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 
+import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
+
 import {
     type,
     project_id,
@@ -20,12 +23,10 @@ import routes_v1 from './routes/v1';
 const {connect} = require('firefose');
 const PORT = process.env.PORT || 3000;
 const app = express();
-
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 app.use('/v1', routes_v1)
-
 
 connect({
     type,
@@ -42,4 +43,5 @@ connect({
 app.listen(PORT, () =>
     console.log('Servidor rodando com sucesso', PORT)
 );
+
 

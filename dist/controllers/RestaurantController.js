@@ -31,7 +31,15 @@ const calc_distance = (lat, long, lat_2, long_2) => {
     return parseFloat((c * r).toFixed(1));
 };
 const populate_fields = [
-    'timeMinMinutes', 'timeMaxMinutes', 'lat', 'fee', 'long', 'geohash', 'delivery_price'
+    'updatedAt',
+    'createdAt',
+    'timeMinMinutes',
+    'timeMaxMinutes',
+    'lat',
+    'fee',
+    'long',
+    'geohash',
+    'delivery_price'
 ];
 const calc_delivery = (distance, fee) => {
     let price = distance * fee;
@@ -43,12 +51,15 @@ const calc_delivery = (distance, fee) => {
 };
 const process_restaurant_ful = (restaurant, lat, lng) => {
     restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, lng);
+    const current_date = new Date();
+    const isNew = new Date().setDate(current_date.getDate() - 14) < restaurant.createdAt;
     const delivery_info = {
         type: 'DELIVERY',
         timeMinMinutes: restaurant.timeMinMinutes,
         timeMaxMinutes: restaurant.timeMaxMinutes,
         fee: calc_delivery(restaurant.distance, restaurant.delivery_price)
     };
+    restaurant.isNew = isNew;
     restaurant.delivery_info = delivery_info;
     for (const populate of populate_fields) {
         delete restaurant[populate];
@@ -72,11 +83,13 @@ exports.default = {
     },
     async update(request, response) {
         const id = request.params.id;
-        const data = request.body.data;
+        const dataBody = request.body.data;
+        const data = JSON.parse(JSON.stringify(dataBody));
+        console.log(data);
         let restaurant = await Restaurant_1.default.findById(id);
         if (!restaurant)
             return response.send("Not found").status(404);
-        new GeoPoint(500, 500);
+        data.updatedAt = new Date();
         restaurant = await Restaurant_1.default.updateById(id, data);
         if (restaurant)
             return response.json(restaurant).status(200);
@@ -111,7 +124,10 @@ exports.default = {
             delivery_price,
             category,
             lat,
-            long, geohash: geoh
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            long,
+            geohash: geoh
         }, (0, uuid_1.v4)());
         return response.status(200).json({
             message: 'Restaurante criado com sucesso',

@@ -17,7 +17,19 @@ const restaurantSchema = new Schema({
         type: String,
         required: false
     },
-
+    
+    total_deliveries:{
+        type: Number,
+        default: 0
+    },
+    total_deliveries_rate: {
+        type: Number,
+        default: 0
+    },
+    total_rate:{
+        type: Number,
+        default: 0
+    },
     delivery_price:{
         type: Number,
         default: 1.5,

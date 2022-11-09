@@ -27,11 +27,14 @@ exports.default = {
         }
     },
     async rate(request, response) {
-        const { uid, user, rate } = request.body;
-        const delivery = await Delivery_1.default.findById(uid);
+        const { id } = request.params;
+        const { user, rate } = request.body;
+        const delivery = await Delivery_1.default.findById(id);
+        if (!delivery)
+            return response.status(404).json({ message: 'Not found' });
         if (!delivery || delivery.userid != user)
             return response.status(401).json({ message: 'Unauthorized' });
-        await delivery.updateById(uid, { rate });
+        await delivery.updateById(id, { rate });
         return response.status(200).json({ message: 'Ok' });
     }
 };

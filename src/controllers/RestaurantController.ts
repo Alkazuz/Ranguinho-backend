@@ -45,7 +45,9 @@ const populate_fields : string[] = [
     'lat', 
     'fee', 
     'long', 
-    'geohash', 
+    'geohash',
+    'total_deliveries',
+    'total_rate',
     'delivery_price'
 ] 
 
@@ -60,12 +62,23 @@ const calc_delivery = (distance: number, fee: number) => {
 const process_restaurant_ful = (restaurant: typeof Restaurant, lat: number, lng: number) => {
     restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, lng);
 
+    const current_date = new Date()
+    const isNew = new Date().setDate(current_date.getDate() - 14) < restaurant.createdAt;
+
     const delivery_info = {
         type: 'DELIVERY',
         timeMinMinutes: restaurant.timeMinMinutes,
         timeMaxMinutes: restaurant.timeMaxMinutes,
         fee: calc_delivery(restaurant.distance, restaurant.delivery_price)
     }
+
+    if(restaurant.total_rate && restaurant.total_rate > 0 && restaurant.total_deliveries && restaurant.total_deliveries > 0){
+        restaurant.rate = restaurant.total_rate / restaurant.total_deliveries
+    }else{
+        restaurant.rate = 0;
+    }
+
+    restaurant.isNew = isNew;
     restaurant.delivery_info = delivery_info;
 
     for(const populate of populate_fields){
@@ -100,10 +113,8 @@ export default {
     async update(request: Request, response: Response){
         const id: string = request.params.id as string;
         const dataBody = request.body.data as string;
-        
 
         const data = JSON.parse(JSON.stringify(dataBody));
-        console.log(data);
 
         let restaurant = await Restaurant.findById(id);
 

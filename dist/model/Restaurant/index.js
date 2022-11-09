@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { Schema, Model } = require('firefose');
 const { SchemaTypes } = require('firefose');
-const { Number, String } = SchemaTypes;
+const { Number, Date, String } = SchemaTypes;
 const restaurantSchema = new Schema({
     name: {
         type: String,
@@ -20,6 +20,12 @@ const restaurantSchema = new Schema({
         type: Number,
         default: 1.5,
         require: true
+    },
+    updatedAt: {
+        type: Date
+    },
+    createdAt: {
+        type: Date
     },
     timeMinMinutes: {
         type: Number,
