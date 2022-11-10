@@ -2,7 +2,7 @@ import { Timestamp } from "firebase/firestore";
 
 const {Schema, Model} = require('firefose');
 const {SchemaTypes} = require('firefose');
-const { Number, Date, String } = SchemaTypes;
+const { Number, ObjectId, String } = SchemaTypes;
 
 const restaurantSchema = new Schema({
     name: {
@@ -12,6 +12,12 @@ const restaurantSchema = new Schema({
     logo: {
         type: String,
         required: true
+    },
+    
+    address_info: {
+        type: ObjectId,
+        required: true,
+        ref: 'address'
     },
     bannerUrl: {
         type: String,
@@ -34,12 +40,6 @@ const restaurantSchema = new Schema({
         type: Number,
         default: 1.5,
         require: true
-    },
-    updatedAt: {
-        type: Date
-    },
-    createdAt: {
-        type: Date
     },
     timeMinMinutes: {
         type: Number,
@@ -65,7 +65,8 @@ const restaurantSchema = new Schema({
         type: String,
         required: true
     }
-}, {timestamp: true});
+}, {timestamps: true});
+
 
 const Restaurant = new Model("restaurant", restaurantSchema);
 export default Restaurant;

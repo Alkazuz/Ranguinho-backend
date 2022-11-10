@@ -3,8 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 
-import * as admin from 'firebase-admin'
-import * as functions from 'firebase-functions'
+import NodeGeocoder from 'node-geocoder'
 
 import {
     type,
@@ -44,4 +43,11 @@ app.listen(PORT, () =>
     console.log('Servidor rodando com sucesso', PORT)
 );
 
-
+const options = {
+    provider: 'google',
+  
+    apiKey: 'AIzaSyB7YL4z-L-sgk9-qp9iYxiv7br-ITaU9zI', // for Mapquest, OpenCage, Google Premier
+    formatter: null // 'gpx', 'string', ...
+  };
+  
+export const geocoder = NodeGeocoder(options);

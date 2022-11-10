@@ -9,6 +9,8 @@ const Restaurant_1 = __importDefault(require("../model/Restaurant"));
 const uuid_1 = require("uuid");
 const ngeohash_1 = __importDefault(require("ngeohash"));
 const schema_1 = require("../schema");
+const __1 = require("..");
+const Address_1 = __importDefault(require("../model/Address"));
 const calc_distance = (lat, long, lat_2, long_2) => {
     // The math module contains a function
     // named toRadians which converts from
@@ -39,7 +41,10 @@ const populate_fields = [
     'fee',
     'long',
     'geohash',
-    'delivery_price'
+    'total_deliveries',
+    'total_rate',
+    'delivery_price',
+    'address'
 ];
 const calc_delivery = (distance, fee) => {
     let price = distance * fee;
@@ -59,6 +64,12 @@ const process_restaurant_ful = (restaurant, lat, lng) => {
         timeMaxMinutes: restaurant.timeMaxMinutes,
         fee: calc_delivery(restaurant.distance, restaurant.delivery_price)
     };
+    if (restaurant.total_rate && restaurant.total_rate > 0 && restaurant.total_deliveries && restaurant.total_deliveries > 0) {
+        restaurant.rate = restaurant.total_rate / restaurant.total_deliveries;
+    }
+    else {
+        restaurant.rate = 0;
+    }
     restaurant.isNew = isNew;
     restaurant.delivery_info = delivery_info;
     for (const populate of populate_fields) {
@@ -85,7 +96,6 @@ exports.default = {
         const id = request.params.id;
         const dataBody = request.body.data;
         const data = JSON.parse(JSON.stringify(dataBody));
-        console.log(data);
         let restaurant = await Restaurant_1.default.findById(id);
         if (!restaurant)
             return response.send("Not found").status(404);
@@ -106,11 +116,12 @@ exports.default = {
         return response.send(restaurant);
     },
     async create(request, response) {
-        const { name, category, delivery_price, lat, long, logo } = request.body;
+        const { name, category, delivery_price, lat, long, logo, bannerURL } = request.body;
         if (!(await schema_1.restaurantSchema.isValid({ name,
             logo,
             delivery_price,
             category,
+            bannerURL,
             lat,
             long }))) {
             return response
@@ -118,15 +129,19 @@ exports.default = {
                 .json({ message: 'dados fornecidos incorretamente' });
         }
         const geoh = ngeohash_1.default.encode(lat, long);
+        const geodata = JSON.parse(JSON.stringify(await __1.geocoder.reverse({ lat: lat, lon: long })))[0];
+        const address = await Address_1.default.create({ state: geodata.administrativeLevels.level1short, city: geodata.administrativeLevels.level2short, neighborhood: geodata.extra.neighborhood });
         const restaurant = await Restaurant_1.default.create({
             name,
             logo,
             delivery_price,
+            bannerURL,
             category,
             lat,
             createdAt: new Date(),
             updatedAt: new Date(),
             long,
+            address_info: address,
             geohash: geoh
         }, (0, uuid_1.v4)());
         return response.status(200).json({

@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 const {Schema, Model} = require('firefose');
 const {SchemaTypes} = require('firefose');
 const {String, Number, Array} = SchemaTypes;
@@ -39,7 +37,7 @@ const deliverySchema = new Schema({
         required: false,
         default: 0
     }
-}, {timestamp: true});
+}, {timestamps: true});
 
 const Delivery = new Model("delivery", deliverySchema);
 export default Delivery;
