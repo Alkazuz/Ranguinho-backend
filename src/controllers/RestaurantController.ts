@@ -97,7 +97,7 @@ export default {
             category,
             lat,
             long,
-            address_info: address,
+            address: address.id,
             geohash: geoh
         }, uuidv4());
 

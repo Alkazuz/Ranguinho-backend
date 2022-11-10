@@ -14,9 +14,8 @@ const restaurantSchema = new Schema({
         required: true
     },
     
-    address_info: {
+    address: {
         type: ObjectId,
-        required: true,
         ref: 'address'
     },
     bannerUrl: {

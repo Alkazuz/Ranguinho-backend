@@ -1,5 +1,6 @@
 import { connect, Model, Schema, SchemaTypes, Query } from 'firefose';
 import admin from 'firebase-admin'
+import geohash from "ngeohash";
 
 import {
     project_id,
@@ -9,6 +10,8 @@ import {
 import { calc_distance, getGeohashRange } from '../src/utils/geoutils';
 import Restaurant from '../src/model/Restaurant';
 import { populate_fields, unpopulate_date } from '../src/utils/schemautils';
+import Address from '../src/model/Address';
+import { geocoder } from '../src';
 
 
 describe('Restaurant Model', () => {
@@ -42,7 +45,7 @@ describe('Restaurant Model', () => {
 
     })
 
-    it('should unpopulate sensitive data', async () => {
+    it('should remove sensitive data', async () => {
         const restaurants = await Restaurant.find(new Query());
         expect(restaurants).toBeDefined()
 
@@ -54,5 +57,42 @@ describe('Restaurant Model', () => {
         }
         
     })
+
+    it('should create restaurant with reference address', async () =>{
+        const geoh = geohash.encode(geo.lat, geo.long);
+
+        const geodata = JSON.parse(JSON.stringify(await geocoder.reverse({ lat: geo.lat, lon: geo.long })))[0];
+        const address = await Address.create({state: geodata.administrativeLevels.level1short, city: geodata.administrativeLevels.level2short, neighborhood : geodata.extra.neighborhood}, 'test')
+        
+        await Restaurant.create({ 
+            name: 'test',
+            logo: 'test',
+            delivery_price: 1,
+            bannerURL: 'test',
+            category: 'test',
+            lat: geo.lat,
+            long: geo.long,
+            address: address.id,
+            geohash: geoh
+        }, 'test');
+
+        const query = new Query()
+        query.where('name', '==', 'test').populate('address')
+        const result = await Restaurant.find(query)
+
+        expect(result).toHaveLength(1)
+        expect(result[0]).toHaveProperty('id')
+
+        // @ts-ignore
+        expect(result[0]?.address).toHaveProperty('id')
+        // @ts-ignore
+        expect(result[0]?.address).toHaveProperty('city')
+        // @ts-ignore
+        expect(result[0]?.address).toHaveProperty('state')
+        // @ts-ignore
+        expect(result[0]?.address).toHaveProperty('neighborhood')
+    })
+
+    
  
 });
