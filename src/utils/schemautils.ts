@@ -31,7 +31,7 @@ export const unpopulate_date = (restaurant: typeof Restaurant) => {
 }
 
 export const process_restaurant_ful = (restaurant: typeof Restaurant, lat: number, lng: number) => {
-    restaurant.distance = calc_distance(restaurant.lat, restaurant.long, lat, lng);
+    restaurant.distance = calc_distance(restaurant.address.lat, restaurant.address.long, lat, lng);
 
     const current_date = new Date()
     const isNew = new Date().setDate(current_date.getDate() - 14) < restaurant.createdAt;

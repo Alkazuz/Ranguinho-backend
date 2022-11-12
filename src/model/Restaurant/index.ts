@@ -47,6 +47,9 @@ const restaurantSchema = new Schema({
         type: Number,
         default: 50,
     },
+    geohash: {
+        type: String,
+    },
     category: {
         type: String,
         required: true,

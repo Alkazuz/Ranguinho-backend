@@ -27,7 +27,7 @@ export default {
         const query = new Query()
         .where("geohash", ">=", range.lower)
         .where("geohash", "<=", range.upper)
-        .offset(page * 10).limit(10)
+        .offset(page * 10).limit(10).populate('address')
         
         const data = await Restaurant.find(query);
 
@@ -111,6 +111,7 @@ export default {
             name,
             logo,
             delivery_price,
+            geohash: geoh,
             bannerUrl: bannerURL,
             category: category_model.id,
             address: address.id,
