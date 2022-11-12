@@ -29,36 +29,6 @@ describe('Restaurant Model', () => {
         }
     })
 
-    it('should test nearby restaurants', async () => {
-        const range = getGeohashRange(geo.lat, geo.long, 10);
-
-        const query = new Query()
-        .where("geohash", ">=", range.lower)
-        .where("geohash", "<=", range.upper)
-        
-        const restaurants = await Restaurant.find(query);
-        expect(restaurants).toBeDefined()
-
-        for(const restaurant of restaurants){
-            const distance = calc_distance(geo.lat, geo.long, restaurant.lat, restaurant.long);
-            expect(distance).toBeLessThanOrEqual(10);
-        }
-
-    })
-
-    it('should remove sensitive data', async () => {
-        const restaurants = await Restaurant.find(new Query());
-        expect(restaurants).toBeDefined()
-
-        for(const restaurant of restaurants){
-            unpopulate_date(restaurant);
-            for(const fields of populate_fields){
-               expect(restaurant).not.toHaveProperty(fields);
-            }
-        }
-        
-    })
-
     it('should create restaurant with reference address & category', async () =>{
         const geoh = geohash.encode(geo.lat, geo.long);
 
@@ -86,7 +56,7 @@ describe('Restaurant Model', () => {
             delivery_price: 1,
             bannerURL: 'test',
             category: category.id,
-
+            geohash: geoh,
             address: address.id,
         }, 'test');
 
@@ -116,6 +86,37 @@ describe('Restaurant Model', () => {
         expect(result[0]?.address).toHaveProperty('state')
         // @ts-ignore
         expect(result[0]?.address).toHaveProperty('neighborhood')
+    })
+
+    it('should test nearby restaurants', async () => {
+        const range = getGeohashRange(geo.lat, geo.long, 10);
+
+        const query = new Query()
+        .where("geohash", ">=", range.lower)
+        .where("geohash", "<=", range.upper).populate('address')
+        
+        const restaurants = await Restaurant.find(query);
+        expect(restaurants).toBeDefined()
+        expect(restaurants.length).toBeGreaterThan(0)
+
+        for(const restaurant of restaurants){
+            const distance = calc_distance(geo.lat, geo.long, restaurant.address.lat, restaurant.address.long);
+            expect(distance).toBeLessThanOrEqual(10);
+        }
+
+    })
+
+    it('should remove sensitive data', async () => {
+        const restaurants = await Restaurant.find(new Query());
+        expect(restaurants).toBeDefined()
+
+        for(const restaurant of restaurants){
+            unpopulate_date(restaurant);
+            for(const fields of populate_fields){
+               expect(restaurant).not.toHaveProperty(fields);
+            }
+        }
+        
     })
 
     it('should delete restaurant and your references', async () => {
