@@ -22,7 +22,6 @@ const restaurantSchema = new Schema({
         type: String,
         required: false
     },
-    
     total_deliveries:{
         type: Number,
         default: 0
@@ -50,20 +49,9 @@ const restaurantSchema = new Schema({
     },
     category: {
         type: String,
-        required: true
+        required: true,
+        ref: 'category'
     },
-    lat: {
-        type: Number,
-        required: true
-    },
-    long: {
-        type: Number,
-        required: true
-    },
-    geohash:{
-        type: String,
-        required: true
-    }
 }, {timestamps: true});
 
 

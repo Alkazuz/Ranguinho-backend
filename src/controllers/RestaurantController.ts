@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 //firebase
 import { Query } from 'firefose';
-import { Timestamp } from "firebase/firestore";
+import { GeoPoint, Timestamp } from "firebase/firestore";
 
 import Restaurant from '../model/Restaurant';
 
@@ -13,6 +13,7 @@ import { geocoder } from '..';
 import Address from '../model/Address';
 import { process_restaurant_ful } from '../utils/schemautils';
 import { getGeohashRange } from '../utils/geoutils';
+import Category from '../model/Category';
 
 export default {
     async list(request: Request, response: Response){
@@ -85,20 +86,34 @@ export default {
                 .json({ message: 'dados fornecidos incorretamente' });
         }
 
-        const geoh = geohash.encode(lat, long);
-        const geodata = JSON.parse(JSON.stringify(await geocoder.reverse({ lat: lat, lon: long })))[0];
-        const address = await Address.create({state: geodata.administrativeLevels.level1short, city: geodata.administrativeLevels.level2short, neighborhood : geodata.extra.neighborhood})
+        let category_model = await Category.find(new Query().where("name", "==", category));
 
+        if(!category_model || category_model.length == 0){
+            return response
+            .status(401)
+            .json({ message: 'dados fornecidos incorretamente' });
+        }
+
+        category_model = category_model[0]
+
+        const geoh = geohash.encode(lat, long);
+        const geodata = await geocoder.reverse({ lat: lat, lon: long });
+        const address = await Address.create({
+            state: geodata[0].administrativeLevels.level1short, 
+            city: geodata[0].administrativeLevels.level2short,
+            neighborhood : geodata[0].extra.neighborhood,
+            entity: 'restaurant',
+            geohash: geoh,
+            lat,
+            long
+        })
         const restaurant = await Restaurant.create({ 
             name,
             logo,
             delivery_price,
-            bannerURL,
-            category,
-            lat,
-            long,
+            bannerUrl: bannerURL,
+            category: category_model.id,
             address: address.id,
-            geohash: geoh
         }, uuidv4());
 
         return response.status(200).json({
