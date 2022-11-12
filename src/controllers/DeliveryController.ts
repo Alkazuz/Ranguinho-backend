@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import * as admin from 'firebase-admin';
 import { inflateSync } from 'zlib';
 import Delivery from '../model/Delivery';
-import Item from '../model/Itens';
+import Item from '../model/Product';
 import Restaurant from '../model/Restaurant';
 
 interface ItemDeliveryPrice{

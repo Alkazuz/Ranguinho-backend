@@ -2,7 +2,7 @@ const {Schema, Model} = require('firefose');
 const {SchemaTypes} = require('firefose');
 const { Number } = SchemaTypes;
 
-const itemSchema = new Schema({
+const productSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -20,11 +20,16 @@ const itemSchema = new Schema({
         default: 1.5,
         require: true
     },
+    category:{
+        type: String,
+        required: true,
+        ref: 'category'
+    },
     description: {
         type: String,
         required: true
     }
 }, {timestamps: true});
 
-const Item = new Model("products", itemSchema);
-export default Item;
+const Product = new Model("products", productSchema);
+export default Product;
