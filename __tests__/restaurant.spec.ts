@@ -118,7 +118,17 @@ describe('Restaurant Model', () => {
         expect(result[0]?.address).toHaveProperty('neighborhood')
     })
 
+    it('should delete restaurant and your references', async () => {
+        await Address.deleteById('test')
+        await Restaurant.deleteById('test')
 
+        const restaurant = await Restaurant.findById('test')
+        const address = await Address.findById('test')
+
+        expect(restaurant).toBeNull()
+        expect(address).toBeNull()
+
+    })
     
  
 });
