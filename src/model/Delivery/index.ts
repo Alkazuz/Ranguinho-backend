@@ -9,15 +9,13 @@ const deliverySchema = new Schema({
     },
     restaurant:{
         type: String,
-        required: true
+        required: true,
+        ref: 'restaurant'
     },
-    lat: {
-        type: Number,
-        required: true
-    },
-    long: {
-        type: Number,
-        required: true
+    address: {
+        type: SchemaTypes.ObjectId,
+        required: true,
+        ref: 'address'
     },
     price: {
         type: Number,
@@ -32,10 +30,10 @@ const deliverySchema = new Schema({
         type: Array,
         required: true
     },
-    status: {
-        type: Number,
-        required: false,
-        default: 0
+    delivery_status: {
+        type: SchemaTypes.ObjectId,
+        required: true,
+        def: 'delivery_status'
     }
 }, {timestamps: true});
 
