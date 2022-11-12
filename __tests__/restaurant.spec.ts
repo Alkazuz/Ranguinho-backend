@@ -12,6 +12,7 @@ import Restaurant from '../src/model/Restaurant';
 import { populate_fields, unpopulate_date } from '../src/utils/schemautils';
 import Address from '../src/model/Address';
 import { geocoder } from '../src';
+import Category from '../src/model/Category';
 
 
 describe('Restaurant Model', () => {
@@ -58,30 +59,54 @@ describe('Restaurant Model', () => {
         
     })
 
-    it('should create restaurant with reference address', async () =>{
+    it('should create restaurant with reference address & category', async () =>{
         const geoh = geohash.encode(geo.lat, geo.long);
 
+        const category_model = await Category.find(new Query().where("name", "==", 'Lanches'));
+
+        expect(category_model).toBeDefined()
+        expect(category_model).toHaveLength(1)
+
+        const category = category_model[0]
+
         const geodata = JSON.parse(JSON.stringify(await geocoder.reverse({ lat: geo.lat, lon: geo.long })))[0];
-        const address = await Address.create({state: geodata.administrativeLevels.level1short, city: geodata.administrativeLevels.level2short, neighborhood : geodata.extra.neighborhood}, 'test')
+        const address = await Address.create({
+            state: geodata.administrativeLevels.level1short, 
+            city: geodata.administrativeLevels.level2short, 
+            neighborhood : geodata.extra.neighborhood,
+            entity: 'restaurant',
+            geohash: geoh,
+            lat: geo.lat,
+            long: geo.long,
+        }, 'test')
         
         await Restaurant.create({ 
             name: 'test',
             logo: 'test',
             delivery_price: 1,
             bannerURL: 'test',
-            category: 'test',
-            lat: geo.lat,
-            long: geo.long,
+            category: category.id,
+
             address: address.id,
-            geohash: geoh
         }, 'test');
 
         const query = new Query()
-        query.where('name', '==', 'test').populate('address')
+        query.where('name', '==', 'test').populate('address').populate('category')
         const result = await Restaurant.find(query)
 
         expect(result).toHaveLength(1)
         expect(result[0]).toHaveProperty('id')
+
+        // @ts-ignore
+        expect(result[0]?.category).toHaveProperty('id')
+        // @ts-ignore
+        expect(result[0]?.category).toHaveProperty('name')
+        // @ts-ignore
+        expect(result[0]?.category).toHaveProperty('image')
+        // @ts-ignore
+        expect(result[0]?.category).toHaveProperty('position')
+        // @ts-ignore
+        expect(result[0]?.category).toHaveProperty('color')
 
         // @ts-ignore
         expect(result[0]?.address).toHaveProperty('id')
@@ -92,6 +117,7 @@ describe('Restaurant Model', () => {
         // @ts-ignore
         expect(result[0]?.address).toHaveProperty('neighborhood')
     })
+
 
     
  
