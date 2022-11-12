@@ -20,3 +20,8 @@ export const rateSchema = Yup.object().shape({
     long: Yup.number().required(),
     logo: Yup.string().required()
 });
+
+export const startSchema = Yup.object().shape({
+    lat: Yup.number().required(),
+    long: Yup.number().required()
+})
