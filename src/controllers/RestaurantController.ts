@@ -22,12 +22,12 @@ export default {
         const lng:number = parseFloat(request.query.lng as string)
         const page:number = parseInt(request.query.page as string)
 
-        const range = getGeohashRange(lat, lng, 30);
+        const range = getGeohashRange(lat, lng, 10);
 
         const query = new Query()
         .where("geohash", ">=", range.lower)
         .where("geohash", "<=", range.upper)
-        .offset(page * 10).limit(10).populate('address')
+        .offset(page * 10).limit(10).populate('address').populate('category')
         
         const data = await Restaurant.find(query);
 
