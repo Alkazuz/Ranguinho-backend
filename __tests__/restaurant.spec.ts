@@ -7,11 +7,10 @@ import {
     private_key,
     client_email
  } from '../src/credentials.json'
-import { calc_distance, getGeohashRange } from '../src/utils/geoutils';
+import { calc_distance, geocoder, getGeohashRange } from '../src/utils/geoutils';
 import Restaurant from '../src/model/Restaurant';
 import { populate_fields, unpopulate_date } from '../src/utils/schemautils';
 import Address from '../src/model/Address';
-import { geocoder } from '../src';
 import Category from '../src/model/Category';
 
 
