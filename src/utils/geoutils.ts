@@ -1,5 +1,15 @@
 
 import geohash from "ngeohash";
+import NodeGeocoder from 'node-geocoder'
+
+const options = {
+  provider: 'google',
+
+  apiKey: 'AIzaSyB7YL4z-L-sgk9-qp9iYxiv7br-ITaU9zI', // for Mapquest, OpenCage, Google Premier
+  formatter: null // 'gpx', 'string', ...
+};
+
+export const geocoder = NodeGeocoder(options);
 
 export const getGeohashRange = (
     latitude: number,
