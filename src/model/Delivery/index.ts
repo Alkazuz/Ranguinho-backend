@@ -33,7 +33,7 @@ const deliverySchema = new Schema({
     delivery_status: {
         type: SchemaTypes.ObjectId,
         required: true,
-        def: 'delivery_status'
+        ref: 'delivery_status'
     }
 }, {timestamps: true});
 

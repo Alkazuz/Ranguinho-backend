@@ -11,13 +11,16 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
+    uid: {
+        type: String,
+        required: true
+    },
     image: {
         type: String,
         required: true
     },
     price:{
         type: Number,
-        default: 1.5,
         require: true
     },
     category:{
@@ -31,5 +34,5 @@ const productSchema = new Schema({
     }
 }, {timestamps: true});
 
-const Product = new Model("products", productSchema);
+const Product = new Model("product", productSchema);
 export default Product;
