@@ -9,10 +9,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import geohash from "ngeohash";
 import { restaurantSchema } from '../schema';
-import { geocoder } from '..';
 import Address from '../model/Address';
 import { process_restaurant_ful } from '../utils/schemautils';
-import { getGeohashRange } from '../utils/geoutils';
+import { geocoder, getGeohashRange } from '../utils/geoutils';
 import Category from '../model/Category';
 
 export default {
