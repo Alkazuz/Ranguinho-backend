@@ -101,7 +101,7 @@ export default {
             state: geodata[0].administrativeLevels.level1short, 
             city: geodata[0].administrativeLevels.level2short,
             neighborhood : geodata[0].extra.neighborhood,
-            entity: 'restaurant',
+            entity: 'delivery',
             geohash: geoh,
             lat,
             long

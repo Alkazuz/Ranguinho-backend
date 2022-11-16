@@ -25,3 +25,11 @@ export const startSchema = Yup.object().shape({
     lat: Yup.number().required(),
     long: Yup.number().required()
 })
+
+export const deliverySchema = Yup.object().shape({
+    lat: Yup.number().required(),
+    long: Yup.number().required(),
+    items: Yup.array().required(),
+    restaurant: Yup.string().required(),
+    userid: Yup.string().required()
+})
