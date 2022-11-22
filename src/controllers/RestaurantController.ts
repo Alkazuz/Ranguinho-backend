@@ -13,6 +13,7 @@ import Address from '../model/Address';
 import { process_restaurant_ful } from '../utils/schemautils';
 import { geocoder, getGeohashRange } from '../utils/geoutils';
 import Category from '../model/Category';
+import Product from '../model/Product';
 
 export default {
     async list(request: Request, response: Response){
@@ -21,15 +22,29 @@ export default {
         const lng:number = parseFloat(request.query.lng as string)
         const page:number = parseInt(request.query.page as string)
 
+        const {category} = request.query;
+
         const range = getGeohashRange(lat, lng, 10);
 
         const query = new Query()
         .where("geohash", ">=", range.lower)
         .where("geohash", "<=", range.upper)
-        .offset(page * 10).limit(10).populate('address').populate('category')
         
-        const data = await Restaurant.find(query);
+        let category_where;
+        if(category){
+            const category_model = await Category.find(new Query().where("name", '==', category))
+            if(category_model && category_model.length > 0){
+                category_where = category_model[0].id
+                //query.where("category", "==", category_model[0].id) // causing Error: 9 FAILED_PRECONDITION:
+            }
+        }
 
+        if(category_where){
+            query.where("category", "==", category_where)
+        } 
+        
+        query.offset(page * 10).limit(10).populate('address').populate('category')
+        const data = await Restaurant.find(query);
         for(const restaurant of data){ 
             process_restaurant_ful(restaurant, lat, lng)
         }
@@ -62,10 +77,12 @@ export default {
         const restaurant = await Restaurant.findById(id);
 
         if(!restaurant) return response.send("Not found").status(404);
+
+        const products = await Product.find(new Query().where("restaurant", "==", id))
         
         process_restaurant_ful(restaurant, lat, lng)
-        
-        return response.send(restaurant);
+        restaurant.products = products;
+        return response.json(restaurant);
 
     },
 

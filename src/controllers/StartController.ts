@@ -41,7 +41,7 @@ export default {
             unpopulate_date(restaurant)
         }
 
-        const categories = await Category.find(new Query());
+        const categories = await Category.find(new Query().orderBy('position', 'asc'));
 
         range = getGeohashRange(latitude, longitude, 25);
 
