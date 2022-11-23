@@ -1,3 +1,4 @@
+import Address from "../model/Address";
 import Restaurant from "../model/Restaurant";
 import { calc_distance } from "./geoutils";
 
@@ -30,7 +31,7 @@ export const unpopulate_date = (restaurant: typeof Restaurant) => {
     }
 }
 
-export const process_restaurant_ful = (restaurant: typeof Restaurant, lat: number, lng: number) => {
+export const process_restaurant_ful = async (restaurant: typeof Restaurant, lat: number, lng: number) => {
     restaurant.distance = calc_distance(restaurant.address.lat, restaurant.address.long, lat, lng);
 
     const current_date = new Date()
