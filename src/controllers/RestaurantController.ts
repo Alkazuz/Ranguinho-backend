@@ -80,7 +80,7 @@ export default {
 
         const products = await Product.find(new Query().where("restaurant", "==", id))
         
-        process_restaurant_ful(restaurant, lat, lng)
+        await process_restaurant_ful(restaurant, lat, lng)
         restaurant.products = products;
         return response.json(restaurant);
 

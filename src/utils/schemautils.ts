@@ -32,6 +32,9 @@ export const unpopulate_date = (restaurant: typeof Restaurant) => {
 }
 
 export const process_restaurant_ful = async (restaurant: typeof Restaurant, lat: number, lng: number) => {
+    if(!restaurant.address.lat){
+        restaurant.address = await Address.findById(restaurant.address)
+    }
     restaurant.distance = calc_distance(restaurant.address.lat, restaurant.address.long, lat, lng);
 
     const current_date = new Date()
