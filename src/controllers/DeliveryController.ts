@@ -15,29 +15,32 @@ import { geocoder } from '../utils/geoutils';
 export default {
     async create(request: Request, response: Response){
 
-        //const appCheckToken = request.header('X-Firebase-AppCheck');
+        if (!request.headers.authorization || request.headers.authorization.split(' ')[0] !== 'Bearer') {
+            return response.status(403).json({ error: 'No credentials sent!' });
+        }
 
-        //if (!appCheckToken) {
-        //    return response.status(401).send('Unauthorized');
-        //}
+        const authToken = request.headers.authorization.split(' ')[1];
 
-        const {userid, restaurant, items, lat, long} = request.body;
+        const {restaurant, items, lat, long} = request.body;
+        console.log(request.body)
 
         if(!(await deliverySchema.isValid({
             lat,
             long,
-            items,
-            restaurant,
-            userid
+            restaurant
         }))){
-            response
+            return response
                 .status(401)
                 .json({ message: 'dados fornecidos incorretamente' });
         }
 
-        try {
-            //const appCheckClaims = await admin.appCheck().verifyToken(appCheckToken);
+        try{
+            const userInfo = await admin
+                .auth()
+                .verifyIdToken(authToken);
             
+            const userid = userInfo.uid;
+
             const restaurant_model = await Restaurant.findById(restaurant);
 
             if(!restaurant_model) return response.status(401).json({message: 'Restaurante não existe'})
@@ -77,10 +80,11 @@ export default {
             }, uuid)
 
             return response.status(201).json(delivery);
-        } catch (err) {
-            return response.status(401).json({message: err.message});
+        }catch (e) {
+            return response
+            .status(401)
+            .send({ error: 'You are not authorized to make this request' });
         }
-        
     }
 
 };
