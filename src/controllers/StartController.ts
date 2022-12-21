@@ -41,6 +41,18 @@ export default {
             unpopulate_date(restaurant)
         }
 
+        const far_restaurants = []
+        if(restaurants.length === 0){
+            query = new Query()
+            //.orderBy('total_rate', 'asc')
+            .limit(10)
+            const restaurants_ = await Restaurant.find(query)
+            for(const restaurant of restaurants_){ 
+                unpopulate_date(restaurant)
+                far_restaurants.push(restaurant)
+            }
+        }
+
         const categories = await Category.find(new Query().orderBy('position', 'asc'));
 
         range = getGeohashRange(latitude, longitude, 25);
@@ -51,7 +63,7 @@ export default {
 
         const banners = await Banner.find(query);
 
-        return response.json({restaurants, categories, banners}).status(200)
+        return response.json({restaurants, categories, banners, far_restaurants}).status(200)
 
     }
 };
