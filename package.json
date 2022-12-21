@@ -7,7 +7,7 @@
   "license": "ISC",
   "dependencies": {
     "@firebase/app": "^0.8.3",
-    "@types/jest": "^29.2.2",
+    "@types/jest": "^29.2.4",
     "@types/uuid": "^8.3.4",
     "@types/yup": "^0.32.0",
     "cors": "^2.8.5",
@@ -34,9 +34,9 @@
     "ts-node": "^10.9.1"
   },
   "scripts": {
+    "postinstall": "tsc",
     "test": "jest",
-    "dev": "nodemon --watch 'src/' --exec ts-node ./src/index.ts -e ts",
-    "start": "vercel dev",
-    "deploy": "vercel deploy --prod"
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon --watch 'src/' --exec ts-node ./src/index.ts -e ts"
   }
 }

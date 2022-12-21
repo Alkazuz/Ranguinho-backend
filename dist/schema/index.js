@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rateSchema = exports.restaurantSchema = void 0;
+exports.deliverySchema = exports.startSchema = exports.rateSchema = exports.restaurantSchema = void 0;
 const Yup = __importStar(require("yup"));
 // yarn add yup @types/yup
 exports.restaurantSchema = Yup.object().shape({
@@ -42,4 +42,13 @@ exports.rateSchema = Yup.object().shape({
     lat: Yup.number().required(),
     long: Yup.number().required(),
     logo: Yup.string().required()
+});
+exports.startSchema = Yup.object().shape({
+    lat: Yup.number().required(),
+    long: Yup.number().required()
+});
+exports.deliverySchema = Yup.object().shape({
+    lat: Yup.number().required(),
+    long: Yup.number().required(),
+    restaurant: Yup.string().required()
 });

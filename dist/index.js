@@ -3,12 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.geocoder = void 0;
 require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
-const node_geocoder_1 = __importDefault(require("node-geocoder"));
 const credentials_json_1 = require("./credentials.json");
 const v1_1 = __importDefault(require("./routes/v1"));
 const { connect } = require('firefose');
@@ -31,9 +29,3 @@ connect({
     client_x509_cert_url: credentials_json_1.client_x509_cert_url
 }, "databaseURI");
 app.listen(PORT, () => console.log('Servidor rodando com sucesso', PORT));
-const options = {
-    provider: 'google',
-    apiKey: 'AIzaSyB7YL4z-L-sgk9-qp9iYxiv7br-ITaU9zI',
-    formatter: null // 'gpx', 'string', ...
-};
-exports.geocoder = (0, node_geocoder_1.default)(options);

@@ -2,36 +2,37 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { Schema, Model } = require('firefose');
 const { SchemaTypes } = require('firefose');
-const { String, Number } = SchemaTypes;
-const addressSchema = new Schema({
-    state: {
+const { Number } = SchemaTypes;
+const productSchema = new Schema({
+    name: {
         type: String,
         required: true
     },
-    entity: {
-        type: String,
-        default: "user"
-    },
-    city: {
+    restaurant: {
         type: String,
         required: true
     },
-    lat: {
+    uid: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: String,
+        required: true
+    },
+    price: {
         type: Number,
-        required: true
+        require: true
     },
-    long: {
-        type: Number,
-        required: true
-    },
-    geohash: {
+    category: {
         type: String,
-        required: true
+        required: true,
+        ref: 'category'
     },
-    neighborhood: {
+    description: {
         type: String,
         required: true
     }
-});
-const Address = new Model("address", addressSchema);
-exports.default = Address;
+}, { timestamps: true });
+const Product = new Model("product", productSchema);
+exports.default = Product;

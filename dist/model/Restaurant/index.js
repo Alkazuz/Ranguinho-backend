@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const { Schema, Model } = require('firefose');
 const { SchemaTypes } = require('firefose');
-const { Number, Date, ObjectId, String } = SchemaTypes;
+const { Number, ObjectId, String } = SchemaTypes;
 const restaurantSchema = new Schema({
     name: {
         type: String,
@@ -12,9 +12,8 @@ const restaurantSchema = new Schema({
         type: String,
         required: true
     },
-    address_info: {
+    address: {
         type: ObjectId,
-        required: true,
         ref: 'address'
     },
     bannerUrl: {
@@ -38,12 +37,6 @@ const restaurantSchema = new Schema({
         default: 1.5,
         require: true
     },
-    updatedAt: {
-        type: Date
-    },
-    createdAt: {
-        type: Date
-    },
     timeMinMinutes: {
         type: Number,
         default: 30,
@@ -52,22 +45,14 @@ const restaurantSchema = new Schema({
         type: Number,
         default: 50,
     },
-    category: {
-        type: String,
-        required: true
-    },
-    lat: {
-        type: Number,
-        required: true
-    },
-    long: {
-        type: Number,
-        required: true
-    },
     geohash: {
         type: String,
-        required: true
-    }
-}, { timestamp: true });
+    },
+    category: {
+        type: String,
+        required: true,
+        ref: 'category'
+    },
+}, { timestamps: true });
 const Restaurant = new Model("restaurant", restaurantSchema);
 exports.default = Restaurant;
