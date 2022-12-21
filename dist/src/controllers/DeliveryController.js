@@ -1,8 +1,32 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const admin = __importStar(require("firebase-admin"));
 const ngeohash_1 = __importDefault(require("ngeohash"));
 const Address_1 = __importDefault(require("../model/Address"));
 const Delivery_1 = __importDefault(require("../model/Delivery"));
@@ -14,24 +38,26 @@ const schema_1 = require("../schema");
 const geoutils_1 = require("../utils/geoutils");
 exports.default = {
     async create(request, response) {
-        //const appCheckToken = request.header('X-Firebase-AppCheck');
-        //if (!appCheckToken) {
-        //    return response.status(401).send('Unauthorized');
-        //}
-        const { userid, restaurant, items, lat, long } = request.body;
+        if (!request.headers.authorization || request.headers.authorization.split(' ')[0] !== 'Bearer') {
+            return response.status(403).json({ error: 'No credentials sent!' });
+        }
+        const authToken = request.headers.authorization.split(' ')[1];
+        const { restaurant, items, lat, long } = request.body;
+        console.log(request.body);
         if (!(await schema_1.deliverySchema.isValid({
             lat,
             long,
-            items,
-            restaurant,
-            userid
+            restaurant
         }))) {
-            response
+            return response
                 .status(401)
                 .json({ message: 'dados fornecidos incorretamente' });
         }
         try {
-            //const appCheckClaims = await admin.appCheck().verifyToken(appCheckToken);
+            const userInfo = await admin
+                .auth()
+                .verifyIdToken(authToken);
+            const userid = userInfo.uid;
             const restaurant_model = await Restaurant_1.default.findById(restaurant);
             if (!restaurant_model)
                 return response.status(401).json({ message: 'Restaurante não existe' });
@@ -66,8 +92,10 @@ exports.default = {
             }, uuid);
             return response.status(201).json(delivery);
         }
-        catch (err) {
-            return response.status(401).json({ message: err.message });
+        catch (e) {
+            return response
+                .status(401)
+                .send({ error: 'You are not authorized to make this request' });
         }
     }
 };

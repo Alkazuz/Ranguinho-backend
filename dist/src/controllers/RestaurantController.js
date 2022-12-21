@@ -62,7 +62,7 @@ exports.default = {
         if (!restaurant)
             return response.send("Not found").status(404);
         const products = await Product_1.default.find(new firefose_1.Query().where("restaurant", "==", id));
-        (0, schemautils_1.process_restaurant_ful)(restaurant, lat, lng);
+        await (0, schemautils_1.process_restaurant_ful)(restaurant, lat, lng);
         restaurant.products = products;
         return response.json(restaurant);
     },
