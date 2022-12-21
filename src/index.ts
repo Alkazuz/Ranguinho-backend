@@ -15,7 +15,7 @@ import {
     auth_uri,
     token_uri,
     auth_provider_x509_cert_url,
-    client_x509_cert_url} from './credentials.json'
+    client_x509_cert_url} from '../credentials.json'
     
 import routes_v1 from './routes/v1';
 
